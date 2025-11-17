@@ -8,7 +8,7 @@ public interface IMusicSchoolDataService
 {
     Task<Student> CreateStudentAsync(Student student, CancellationToken cancellationToken = default);
     Task<Student?> AddInstrumentsAsync(Guid studentId, IEnumerable<Instrument> instruments, CancellationToken cancellationToken = default);
-    IAsyncEnumerable<Student> GetAllStudentsAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Student>> GetAllStudentsAsync(CancellationToken cancellationToken = default);
 }
 
 public sealed class MusicSchoolDataService : IMusicSchoolDataService, IDisposable
@@ -70,18 +70,18 @@ public sealed class MusicSchoolDataService : IMusicSchoolDataService, IDisposabl
         }
     }
 
-    public async IAsyncEnumerable<Student> GetAllStudentsAsync([System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Student>> GetAllStudentsAsync(CancellationToken cancellationToken = default)
     {
+        var students = new List<Student>();
         var iterator = _studentsContainer.GetItemQueryIterator<Student>("SELECT * FROM c");
 
         while (iterator.HasMoreResults && !cancellationToken.IsCancellationRequested)
         {
             var response = await iterator.ReadNextAsync(cancellationToken);
-            foreach (var student in response.Resource)
-            {
-                yield return student;
-            }
+            students.AddRange(response.Resource);
         }
+
+        return students;
     }
 
     public void Dispose()
