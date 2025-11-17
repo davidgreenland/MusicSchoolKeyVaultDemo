@@ -3,6 +3,7 @@ using KeyVaultDemo.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace KeyVaultDemo.Features;
@@ -11,6 +12,7 @@ public class GetAllStudents
 {
     private readonly ILogger<GetAllStudents> _logger;
     private readonly IMusicSchoolDataService _dataService;
+    private readonly IConfiguration _configuration;
 
     public GetAllStudents(ILogger<GetAllStudents> logger, IMusicSchoolDataService dataService)
     {
