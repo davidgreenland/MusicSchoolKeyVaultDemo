@@ -16,16 +16,18 @@ public sealed class MusicSchoolDataService : IMusicSchoolDataService, IDisposabl
 {
     private const string DatabaseName = "musicschool";
     private const string StudentsContainerName = "students";
+    private readonly IConfiguration _configuration;
 
     private readonly CosmosClient _client;
     private readonly Container _studentsContainer;
 
     public MusicSchoolDataService(IConfiguration configuration)
     {
+        _configuration = configuration;
         // Use Default Azure Credential
         // Add RBAC  to Cosmos DB
         // User & Function App
-        var cosmosUri = configuration["COSMOSDB_URI"]
+        var cosmosUri = _configuration["COSMOSDB_URI"]
             ?? throw new InvalidOperationException("CosmosUri setting is missing.");
 
         _client = new CosmosClient(cosmosUri, new DefaultAzureCredential());
