@@ -1,3 +1,4 @@
+using Azure.Identity;
 using KeyVaultDemo.Models;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
@@ -21,10 +22,13 @@ public sealed class MusicSchoolDataService : IMusicSchoolDataService, IDisposabl
 
     public MusicSchoolDataService(IConfiguration configuration)
     {
-        var connectionString = configuration["COSMOSDB_CONNECTIONSTRING"]
-            ?? throw new InvalidOperationException("CosmosConnection setting is missing.");
+        // Use Default Azure Credential
+        // Add RBAC  to Cosmos DB
+        // User & Function App
+        var cosmosUri = configuration["COSMOSDB_URI"]
+            ?? throw new InvalidOperationException("CosmosUri setting is missing.");
 
-        _client = new CosmosClient(connectionString);
+        _client = new CosmosClient(cosmosUri, new DefaultAzureCredential());
 
         _studentsContainer = _client.GetContainer(DatabaseName, StudentsContainerName);
     }
